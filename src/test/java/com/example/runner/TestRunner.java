@@ -1,7 +1,11 @@
 package com.example.runner;
 
+import com.example.utils.ReportArchiver;
+import com.example.utils.RunInfo;
 import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 
 @CucumberOptions(
@@ -11,15 +15,22 @@ import org.testng.annotations.DataProvider;
         plugin = {
                 "pretty",
                 "html:" + TestRunner.HTML_REPORT,
-                "json:target/cucumber-reports/cucumber.json",
-                "rerun:target/cucumber-reports/rerun.txt"
+                "json:" + TestRunner.JSON_REPORT,
+                "rerun:" + TestRunner.RERUN_FILE
         },
         monochrome = true
 )
 public class TestRunner extends AbstractTestNGCucumberTests {
 
-    /** Cucumber HTML report of the current run; ReportArchiveListener copies it into the Test Results folder. */
+    /** Cucumber output of the current run; copied into Test Results/TestRun_<ENV>_<timestamp> after the run. */
     public static final String HTML_REPORT = "target/cucumber-reports/cucumber.html";
+    public static final String JSON_REPORT = "target/cucumber-reports/cucumber.json";
+    public static final String RERUN_FILE = "target/cucumber-reports/rerun.txt";
+
+    @BeforeClass(alwaysRun = true)
+    public void fixRunTimestamp() {
+        RunInfo.runId(); // report and video folder names use the run's start time
+    }
 
     /**
      * Each Cucumber scenario becomes one TestNG test.
@@ -30,5 +41,13 @@ public class TestRunner extends AbstractTestNGCucumberTests {
     @DataProvider(parallel = true)
     public Object[][] scenarios() {
         return super.scenarios();
+    }
+
+    /** Cucumber writes the HTML report in super.tearDownClass(); archive it right after. */
+    @Override
+    @AfterClass(alwaysRun = true)
+    public void tearDownClass() {
+        super.tearDownClass();
+        ReportArchiver.archive(HTML_REPORT, JSON_REPORT, RERUN_FILE);
     }
 }

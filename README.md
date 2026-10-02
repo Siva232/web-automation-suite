@@ -105,13 +105,27 @@ mvn clean test "-Dparallel.execution=false"                   # run sequentially
 mvn clean test "-Dthread.count=5"                             # 5 parallel browsers
 mvn clean test -Dbrowser=firefox -Dheadless=true
 mvn clean test "-Dapp1.password=secret"                       # override one app's value
+mvn clean test "-Dvideo.recording=false"                      # no videos for this run
+mvn clean test "-Dvideo.save.for=failed"                      # keep videos of failed scenarios only
 ```
 
 ## Reports
-- **Test Results history:** after every run the HTML report is saved to `Test Results/` as
-  `TestReport_<ENV>_<yyyy-MM-dd_HH-mm-ss>.html` (e.g. `TestReport_QA_2026-09-27_12-37-10.html`).
-  Only the newest `report.history.count` reports are kept (config.properties; 0 = keep all).
-  Folder name: `report.folder`. Each file is self-contained, screenshots included.
+- **Test Results history:** every suite execution gets one folder with everything it produced:
+  ```
+  Test Results/
+    TestRun_QA_2026-09-28_10-15-30/
+      TestReport_QA_2026-09-28_10-15-30.html   HTML report, screenshots included, links to videos
+      cucumber.json                            raw results
+      rerun.txt                                failed scenarios
+      Videos/                                  one video per scenario
+  ```
+  Only the newest `report.history.count` run folders are kept (config.properties; 0 = keep all).
+  Parent folder name: `report.folder`.
+- **Videos:** with `video.recording=true`, every UI scenario is recorded (Chrome/Edge, also headless and
+  in parallel) and saved as `Videos/<app>-<module>_L<line>_<Scenario_name>_<PASSED|FAILED>.avi` in the
+  run folder. Each scenario in the HTML report links to its video.
+  `video.save.for=failed` keeps only failed scenarios' videos. The `.avi` files (Motion-JPEG) play in VLC or Windows Media Player, not inside a web browser.
+  Recording uses Chrome's built-in DevTools screencast via Selenium, with no extra libraries.
 - Cucumber HTML (latest run): `target/cucumber-reports/cucumber.html` (failure screenshots are attached here)
 - Cucumber JSON: `target/cucumber-reports/cucumber.json`
 - Failed scenarios list: `target/cucumber-reports/rerun.txt`

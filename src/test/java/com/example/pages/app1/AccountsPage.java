@@ -34,7 +34,8 @@ public class AccountsPage extends BasePage {
 
     /** Returns the row whose Email matches, as header -> cell text; empty map when not found. */
     public Map<String, String> getAccountByEmail(String email) {
-        List<String> headers = getColumnHeaders();
+        List<String> headers = getColumnHeaders(); // waits for the table
+        waitForVisible(ROWS);
         int emailIndex = headers.indexOf("Email");
         for (WebElement row : driver.findElements(ROWS)) {
             List<WebElement> cells = row.findElements(By.tagName("td"));
@@ -50,7 +51,8 @@ public class AccountsPage extends BasePage {
     }
 
     public void sortBy(String column) {
-        driver.findElements(HEADERS).get(columnIndex(column)).click();
+        int index = columnIndex(column); // waits for the table before the headers are looked up
+        driver.findElements(HEADERS).get(index).click();
     }
 
     private int columnIndex(String column) {
