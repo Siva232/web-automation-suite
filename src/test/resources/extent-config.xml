@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Look and feel of the Extent (Spark) report, read by com.example.listeners.ExtentCucumberListener.
+  Which file is used is set by "extent.config.file" in config.properties.
+  Every element is optional - remove one to fall back to the Extent default.
+-->
+<extentreports>
+    <configuration>
+        <!-- STANDARD (light) | DARK -->
+        <theme>STANDARD</theme>
+
+        <!-- Browser tab title and the name in the report's top bar -->
+        <documentTitle>Web Automation Suite</documentTitle>
+        <reportName>Web Automation Test Report</reportName>
+
+        <encoding>UTF-8</encoding>
+
+        <!-- java.text.SimpleDateFormat pattern for all times shown in the report -->
+        <timeStampFormat>dd MMM yyyy HH:mm:ss</timeStampFormat>
+
+        <!-- Timeline of scenario durations on the dashboard -->
+        <timelineEnabled>true</timelineEnabled>
+
+        <!-- Show embedded screenshots as small thumbnails (click to enlarge) -->
+        <thumbnailForBase64>true</thumbnailForBase64>
+
+        <!-- true = copy the report's CSS/JS/fonts into a "spark" folder next to it, so it opens
+             without internet access; false = load them from the CDN -->
+        <offlineMode>false</offlineMode>
+
+        <!-- Protocol used for the CDN links: HTTP | HTTPS -->
+        <protocol>HTTPS</protocol>
+
+        <!-- Extra CSS added to the report, e.g. company colours or a logo -->
+        <css><![CDATA[
+            .step .badge { font-size: 0.75rem; }
+        ]]></css>
+
+        <!-- Extra JavaScript run when the report opens -->
+        <js><![CDATA[
+        ]]></js>
+    </configuration>
+</extentreports>

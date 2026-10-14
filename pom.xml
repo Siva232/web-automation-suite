@@ -21,9 +21,12 @@
         <testng.version>7.12.0</testng.version>
         <selenium.version>4.49.0</selenium.version>
         <mysql-connector.version>26.7.0</mysql-connector.version>
+        <extentreports.version>5.1.2</extentreports.version>
 
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
+        <!-- 3.5.x is the last line with Surefire's native TestNG provider. 3.6.0 runs TestNG through the
+             JUnit Platform engine, which ignores suite XML files (testng.xml, testng-rerun.xml). -->
+        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
 
         <!-- Default suite; override with -Dsuite.xml=... -->
         <suite.xml>testng.xml</suite.xml>
@@ -78,6 +81,21 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>${mysql-connector.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- ExtentReports (com.aventstack - official) Spark HTML report, fed by
+             com.example.listeners.ExtentCucumberListener. Lombok is only needed to build Extent itself. -->
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>${extentreports.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.projectlombok</groupId>
+                    <artifactId>lombok</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

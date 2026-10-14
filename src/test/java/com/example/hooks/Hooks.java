@@ -3,6 +3,7 @@ package com.example.hooks;
 import com.example.utils.ConfigReader;
 import com.example.utils.DriverFactory;
 import com.example.utils.RunInfo;
+import com.example.utils.ScenarioRetry;
 import com.example.utils.VideoRecorder;
 import io.cucumber.java.After;
 import io.cucumber.java.AfterStep;
@@ -24,12 +25,14 @@ public class Hooks {
         VideoRecorder.start(DriverFactory.getDriver());
     }
 
-    /** Attach a screenshot to the Cucumber report for the step that failed. */
+    /** Attach a screenshot to the reports (screenshot.capture = failed | all | none). */
     @AfterStep("@ui")
-    public void captureOnFailure(Scenario scenario) {
-        if (scenario.isFailed()) {
+    public void captureScreenshot(Scenario scenario) {
+        String capture = ConfigReader.get("screenshot.capture").toLowerCase();
+        boolean wanted = capture.equals("all") || (capture.equals("failed") && scenario.isFailed());
+        if (wanted) {
             byte[] screenshot = ((TakesScreenshot) DriverFactory.getDriver()).getScreenshotAs(OutputType.BYTES);
-            scenario.attach(screenshot, "image/png", "Failure screenshot");
+            scenario.attach(screenshot, "image/png", scenario.isFailed() ? "Failure screenshot" : "Screenshot");
         }
     }
 
@@ -68,8 +71,12 @@ public class Hooks {
         }
     }
 
-    /** e.g. app2-cart_L14_Cart_shows_the_products_that_were_added_PASSED.avi */
+    /**
+     * e.g. app2-cart_L14_Cart_shows_the_products_that_were_added_PASSED.avi,
+     * with "_attempt2", "_attempt3", ... for the retries of a failed scenario (rerun.count).
+     */
     private static String videoFileName(Scenario scenario) {
+        int attempt = ScenarioRetry.attempt(ScenarioRetry.key(scenario.getUri(), scenario.getLine()));
         // URI like file:///C:/.../features/app2/cart.feature -> "app2-cart"
         String[] parts = scenario.getUri().toString().split("/");
         String feature = (parts.length > 1 ? parts[parts.length - 2] + "-" : "")
@@ -78,6 +85,7 @@ public class Hooks {
         if (name.length() > 80) {
             name = name.substring(0, 80);
         }
-        return feature + "_L" + scenario.getLine() + "_" + name + "_" + scenario.getStatus() + ".avi";
+        return feature + "_L" + scenario.getLine() + "_" + name + "_" + scenario.getStatus()
+                + (attempt > 1 ? "_attempt" + attempt : "") + ".avi";
     }
 }

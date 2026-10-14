@@ -11,11 +11,13 @@ import java.time.format.DateTimeFormatter;
  * Test Results/
  *   TestRun_QA_2026-09-28_10-15-30/
  *     TestReport_QA_2026-09-28_10-15-30.html
+ *     ExtentReport_QA_2026-09-28_10-15-30.html
  *     cucumber.json
  *     rerun.txt
  *     Videos/
  * </pre>
  * The timestamp is fixed the first time this class is used (at suite start).
+ * A "run.label" system property is appended, e.g. TestRun_QA_2026-09-28_10-15-30_Rerun (set by FailedScenariosRunner).
  */
 public final class RunInfo {
 
@@ -23,9 +25,14 @@ public final class RunInfo {
     public static final String RUN_FOLDER_PREFIX = "TestRun_";
 
     private static final String RUN_ID = ConfigReader.getEnv().toUpperCase() + "_"
-            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
+            + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + label();
 
     private RunInfo() {
+    }
+
+    private static String label() {
+        String label = System.getProperty("run.label");
+        return label == null || label.isBlank() ? "" : "_" + label.trim();
     }
 
     /** e.g. QA_2026-09-28_10-15-30 */

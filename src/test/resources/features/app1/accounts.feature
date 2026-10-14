@@ -7,7 +7,7 @@ Feature: App1 - Accounts page module
   Background:
     Given the user is on the App1 accounts page
 
-  @smoke
+  @smoke @accounts1
   Scenario: Accounts table shows the expected columns
     Then the App1 accounts table should have the columns:
       | Last Name  |
